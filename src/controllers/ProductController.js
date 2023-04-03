@@ -67,3 +67,83 @@ else{
   throw new Error('Product not found')
 }
 })
+
+//Create a product
+export const createNewProduct = asyncHandler(async(req,res)=>{
+  const {brand,name,category,stock,price,image,productIsNew,description} =req.body
+
+  const newProduct = Product.create({
+    brand,
+    name,
+    category,
+    stock,
+    price,
+    image,
+    productIsNew,
+    description
+  })
+  // await newProduct.save();
+const products = await Product.find({})
+  if(newProduct){
+    res.json(products)
+  }else{
+res.status(404)
+throw new Error ('Product could not be uploaded')
+  }
+})
+
+//Delete a product
+export const deleteProduct = asyncHandler(async(req,res)=>{
+  const product = await Product.findByIdAndDelete(req.params.id)
+  if(product){
+res.json(product)
+  }else{
+res.status(404)
+throw new Error ('Product not found')
+  }
+})
+
+
+//Update a product
+
+export const updateProduct = asyncHandler(async(req,res)=>{
+  const {brand,name,category,stock,price,id,image,productIsNew,description} =req.body
+
+  const product = await Product.findById(id)
+  if(product){
+      product.brand=brand,
+      product.name=name,
+      product.category=category,
+      product.stock=stock,
+      product.price=price,
+      product.image=image,
+      product.productIsNew=productIsNew,
+      product.description=description  
+
+      const updatedProduct = await product.save();
+  res.json(updatedProduct)
+  }else{
+    res.status(404)
+    throw new Error('Product could not be updated')
+  }
+  
+})
+
+export const removeProductReview = asyncHandler(async(req,res)=>{
+    const product = await Product.findById(req.params.productId)
+    const updatedReview = product.reviews.filter((rev)=>rev._id.valueOf() !==req.params.reviewId)
+    if(product){
+      product.reviews = updatedReview;
+      product.numberOfReviews= product.reviews.length;
+      if(product.numberOfReviews>0){
+        product.rating = product.reviews.reduce((acc,item)=>item.rating+acc,0) /product.reviews.length
+      }else{
+        product.rating=1
+      }
+await product.save();
+res.json({message:'Review has been removed'})
+    }else{
+      res.status(404)
+      throw new Error ('Product not found')
+    }
+})

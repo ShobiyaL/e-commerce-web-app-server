@@ -27,4 +27,13 @@ throw new Error('No token available')
 
 });
 
-export default authentication;
+const admin = (req,res,next)=>{
+ if(req.user && req.user.isAdmin !== 'false'){
+next();
+ }else{
+    res.status(401).json({message:'Not authorized as admin'})
+    throw new Error('Not authorized as admin')
+ }
+}
+
+export { authentication, admin};

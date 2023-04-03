@@ -3,7 +3,7 @@ const router = express.Router();
 
 import { getUserOrders, updateProfile } from '../controllers/UserController.js';
 import { createOrder } from '../controllers/OrderController.js';
-import { writeProductReview } from '../controllers/productController.js';
+import { writeProductReview } from '../controllers/ProductController.js';
 
 
 router.put('/users/updateProfile/:id',updateProfile)
